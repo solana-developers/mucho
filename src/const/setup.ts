@@ -1,6 +1,9 @@
 import { ToolCommandConfig, ToolNames } from "@/types";
 
 export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
+  node: {
+    version: "node --version",
+  },
   rust: {
     pathSource: "$HOME/.cargo/env",
     version: "rustc --version",

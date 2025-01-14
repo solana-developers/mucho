@@ -45,9 +45,9 @@ export function infoCommand() {
 
       info.push(separator);
       info.push("Platform tools:");
-      const platformTools = await getPlatformToolsVersions();
-      for (const key in platformTools) {
-        info.push("  " + key + ": " + platformTools[key]);
+      const solanaTools = getPlatformToolsVersions();
+      for (const key in solanaTools) {
+        info.push("  " + key + ": " + solanaTools[key]);
       }
 
       info.push(separator);

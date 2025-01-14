@@ -89,11 +89,11 @@ export function buildCommand() {
 
       let toolsVersion: string | null = null;
       const solanaVersion = await installedToolVersion("solana");
-      const { platformTools } = await getPlatformToolsVersions();
+      const solanaTools = getPlatformToolsVersions();
 
       if (
         isVersionNewer(solanaVersion || "", "2.0") &&
-        !isVersionNewer(platformTools, "1.43")
+        !isVersionNewer(solanaTools["platform-tools"], "1.43")
       ) {
         warnMessage(
           `cargo build-sbf versions >=2.X requires building with platform tools version >=1.43`,

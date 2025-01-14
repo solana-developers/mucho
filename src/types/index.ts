@@ -5,6 +5,7 @@ export type ToolNames =
   | "solana"
   | "avm"
   | "anchor"
+  | "node"
   | "yarn"
   | "zest"
   | "cargo-update"
@@ -24,9 +25,9 @@ export type ToolCommandConfig = {
 };
 
 export type PlatformToolsVersions = Partial<{
-  rust: string;
-  platformTools: string;
-  buildSbf: string;
+  rustc: string;
+  "platform-tools": string;
+  "build-sbf": string;
 }>;
 
 /**
