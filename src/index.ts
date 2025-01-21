@@ -13,6 +13,7 @@ import { validatorCommand } from "@/commands/validator";
 import { buildCommand } from "@/commands/build";
 import { coverageCommand } from "@/commands/coverage";
 import { deployCommand } from "@/commands/deploy";
+import { tokenCommand } from "./commands/token";
 
 // ensure the user running the cli tool is on a supported javascript runtime version
 assertRuntimeVersion();
@@ -33,6 +34,7 @@ async function main() {
         .addCommand(cloneCommand())
         .addCommand(buildCommand())
         .addCommand(deployCommand())
+        .addCommand(tokenCommand())
         .addCommand(coverageCommand())
         .addCommand(infoCommand());
 

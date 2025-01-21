@@ -4,7 +4,42 @@ import { ProgramsByClusterLabels, SolanaCluster } from "@/types/config";
 import { warnMessage } from "@/lib/logs";
 import { checkCommand, getCommandOutputSync, VERSION_REGEX } from "@/lib/shell";
 import { PlatformToolsVersions } from "@/types";
-import { createKeyPairSignerFromBytes, KeyPairSigner } from "@solana/web3.js";
+import {
+  Commitment,
+  CompilableTransactionMessage,
+  createKeyPairSignerFromBytes,
+  getSignatureFromTransaction,
+  KeyPairSigner,
+  Rpc,
+  RpcSubscriptions,
+  sendAndConfirmTransactionFactory,
+  signature,
+  signTransactionMessageWithSigners,
+  SolanaRpcApi,
+  SolanaRpcSubscriptionsApi,
+  TransactionMessageWithBlockhashLifetime,
+} from "@solana/web3.js";
+
+type Client = {
+  rpc: Rpc<SolanaRpcApi>;
+  rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>;
+};
+
+export const signAndSendTransaction = async (
+  client: Client,
+  transactionMessage: CompilableTransactionMessage &
+    TransactionMessageWithBlockhashLifetime,
+  commitment: Commitment = "confirmed",
+) => {
+  const signedTransaction = await signTransactionMessageWithSigners(
+    transactionMessage,
+  );
+  const signature = getSignatureFromTransaction(signedTransaction);
+  await sendAndConfirmTransactionFactory(client)(signedTransaction, {
+    commitment,
+  });
+  return signature;
+};
 
 export function loadKeypairFromFile(
   filePath: string = DEFAULT_KEYPAIR_PATH,
@@ -106,4 +141,39 @@ export function getPlatformToolsVersions(): PlatformToolsVersions {
   });
 
   return tools;
+}
+
+export function getRpcUrlFromMoniker(moniker: string): string {
+  switch (moniker) {
+    case "mainnet":
+      return "https://api.mainnet-beta.solana.com";
+    case "testnet":
+      return "https://api.testnet.solana.com";
+    case "devnet":
+      return "https://api.devnet.solana.com";
+    case "localnet":
+    case "localhost":
+      return "http://localhost:8899";
+    default:
+      return moniker;
+  }
+}
+
+export function getExplorerUrl(
+  cluster: SolanaCluster | string,
+  txSignature?: string,
+): URL {
+  const rpcUrl = getRpcUrlFromMoniker(cluster);
+  const explorerUrl = new URL(
+    `https://explorer.solana.com/tx/${txSignature}?cluster=custom`,
+  );
+  explorerUrl.searchParams.set("customUrl", rpcUrl);
+  return explorerUrl;
+}
+
+export function getWebsocketUrl(cluster: SolanaCluster | string): URL {
+  const rpcUrl = getRpcUrlFromMoniker(cluster);
+  const websocketUrl = new URL(rpcUrl);
+  websocketUrl.protocol = "ws";
+  return websocketUrl;
 }

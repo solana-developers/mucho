@@ -14,7 +14,7 @@ import {
 } from "@/lib/utils";
 import { buildTestValidatorCommand } from "@/lib/shell/test-validator";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { loadKeypairFromFile } from "@/lib/solana";
+import { getExplorerUrl, loadKeypairFromFile } from "@/lib/solana";
 import { DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR } from "@/const/solana";
 import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
 import { validateExpectedCloneCounts } from "@/lib/shell/clone";
@@ -181,15 +181,11 @@ export function validatorCommand() {
         );
       }
 
-      const explorerUrl = new URL(
-        "https://explorer.solana.com/?cluster=custom",
-      );
-      explorerUrl.searchParams.set("customUrl", "http://localhost:8899");
       console.log("\nSolana Explorer for your local test validator:");
       console.log(
         "(on Brave Browser, you may need to turn Shields down for the Explorer website)",
       );
-      console.log(explorerUrl.toString());
+      console.log(getExplorerUrl("http://localhost:8899").toString());
 
       shellExecInSession({
         command,
