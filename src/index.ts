@@ -13,6 +13,7 @@ import { validatorCommand } from "@/commands/validator";
 import { buildCommand } from "@/commands/build";
 import { coverageCommand } from "@/commands/coverage";
 import { deployCommand } from "@/commands/deploy";
+import { tokenCommand } from "./commands/token";
 import { docsCommand } from "@/commands/docs";
 import { inspectCommand } from "@/commands/inspect";
 
@@ -36,6 +37,7 @@ async function main() {
         .addCommand(cloneCommand())
         .addCommand(buildCommand())
         .addCommand(deployCommand())
+        .addCommand(tokenCommand())
         .addCommand(coverageCommand())
         .addCommand(infoCommand())
         .addCommand(docsCommand());
