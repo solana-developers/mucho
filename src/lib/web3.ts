@@ -7,53 +7,18 @@ import {
   parseSetComputeUnitLimitInstruction,
   parseSetComputeUnitPriceInstruction,
   parseSetLoadedAccountsDataSizeLimitInstruction,
-} from "@solana-program/compute-budget";
+} from "gill/programs";
 import {
   address,
   Blockhash,
   createSolanaRpc,
-  devnet,
-  DevnetUrl,
   getBase58Encoder,
   GetTransactionApi,
-  mainnet,
-  MainnetUrl,
-  testnet,
-  TestnetUrl,
   UnixTimestamp,
-} from "@solana/web3.js";
-
-type GenericUrl = string & {};
-
-export type ModifiedClusterUrl =
-  | DevnetUrl
-  | MainnetUrl
-  | TestnetUrl
-  | GenericUrl;
+  ModifiedClusterUrl,
+} from "gill";
 
 export type SolanaUrlOrMoniker = SolanaCluster | ModifiedClusterUrl;
-
-/**
- * Get a public Solana RPC endpoint for a cluster based on its moniker
- *
- * Note: These RPC URLs are rate limited and not suitable for production applications.
- */
-export function getPublicSolanaRpcUrl(cluster: SolanaCluster | string): string {
-  switch (cluster) {
-    case "devnet":
-      return devnet("https://api.devnet.solana.com");
-    case "testnet":
-      return testnet("https://api.testnet.solana.com");
-    case "mainnet":
-    case "mainnet-beta":
-      return mainnet("https://api.mainnet-beta.solana.com");
-    case "localnet":
-    case "localhost":
-      return "http://127.0.0.1:8899";
-    default:
-      throw new Error("Invalid cluster moniker");
-  }
-}
 
 /**
  * Genesis hash for Solana networks
@@ -80,7 +45,7 @@ export async function getMonikerFromGenesisHash(
   if ("hash" in args) {
     switch (args.hash) {
       case GENESIS_HASH.mainnet:
-        return "mainnet-beta";
+        return "mainnet";
       case GENESIS_HASH.devnet:
         return "devnet";
       case GENESIS_HASH.testnet:
@@ -117,37 +82,37 @@ export type GetExplorerLinkArgs = {
 
 /**
  * Craft a Solana Explorer link on any cluster
+ *
+ * todo: (nick) remove this function in the next version of gill
  */
-export function getExplorerLink(props: GetExplorerLinkArgs): URL {
+export function getExplorerLink(props: GetExplorerLinkArgs = {}): string {
   let url: URL | null = null;
 
-  if (!props.cluster) props.cluster = "mainnet-beta";
+  // default to mainnet / mainnet-beta
+  if (!props.cluster || props.cluster == "mainnet")
+    props.cluster = "mainnet-beta";
+
+  url = new URL("https://explorer.solana.com");
 
   if ("address" in props) {
-    url = new URL(`https://explorer.solana.com/address/${props.address}`);
+    url.pathname = `/address/${props.address}`;
   } else if ("transaction" in props) {
-    url = new URL(`https://explorer.solana.com/tx/${props.transaction}`);
+    url.pathname = `/tx/${props.transaction}`;
   } else if ("block" in props) {
-    url = new URL(`https://explorer.solana.com/block/${props.block}`);
+    url.pathname = `/block/${props.block}`;
   }
-
-  if (!url) throw new Error("Invalid Solana Explorer URL created");
 
   if (props.cluster !== "mainnet-beta") {
     if (props.cluster === "localnet") {
       // localnet technically isn't a cluster, so requires special handling
       url.searchParams.set("cluster", "custom");
       url.searchParams.set("customUrl", "http://localhost:8899");
-    } else if (props.cluster.startsWith("http")) {
-      // localnet technically isn't a cluster, so requires special handling
-      url.searchParams.set("cluster", "custom");
-      url.searchParams.set("customUrl", props.cluster);
     } else {
       url.searchParams.set("cluster", props.cluster);
     }
   }
 
-  return url;
+  return url.toString();
 }
 
 export function unixTimestampToDate(

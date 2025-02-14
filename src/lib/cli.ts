@@ -16,12 +16,12 @@ import { SolanaToml, SolanaTomlWithConfigPath } from "@/types/config";
 import {
   DEFAULT_CLI_YAML_PATH,
   DEFAULT_CONFIG_FILE,
-  DEFAULT_KEYPAIR_PATH,
   DEFAULT_TEST_LEDGER_DIR,
 } from "@/const/solana";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { warningOutro, warnMessage } from "@/lib/logs";
 import { SolanaCliYaml } from "@/types/solana";
+import { DEFAULT_CLI_KEYPAIR_PATH } from "gill/node";
 
 /**
  * Load the Solana CLI's config file
@@ -57,7 +57,7 @@ export function loadSolanaCliConfig(
     return cliConfig;
   } catch (err) {
     return {
-      keypair_path: DEFAULT_KEYPAIR_PATH,
+      keypair_path: DEFAULT_CLI_KEYPAIR_PATH,
     };
   }
 }

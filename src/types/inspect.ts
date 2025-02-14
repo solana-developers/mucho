@@ -1,8 +1,8 @@
-import { SolanaUrlOrMoniker } from "@/lib/web3";
-import type { Commitment, createSolanaRpc } from "@solana/web3.js";
+import { SolanaCluster } from "@/types/config";
+import type { Commitment, createSolanaRpc } from "gill";
 
 export type InspectorBaseArgs = {
-  cluster: SolanaUrlOrMoniker;
+  cluster: SolanaCluster;
   rpc: ReturnType<typeof createSolanaRpc>;
   commitment?: Commitment;
 };

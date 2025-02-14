@@ -1,63 +1,14 @@
-import { doesFileExist, loadJsonFile } from "@/lib/utils";
-import { DEFAULT_KEYPAIR_PATH } from "@/const/solana";
 import { ProgramsByClusterLabels, SolanaCluster } from "@/types/config";
 import { warnMessage } from "@/lib/logs";
-import { checkCommand, getCommandOutputSync, VERSION_REGEX } from "@/lib/shell";
+import { getCommandOutputSync, VERSION_REGEX } from "@/lib/shell";
 import { PlatformToolsVersions } from "@/types";
-import {
-  address,
-  Commitment,
-  CompilableTransactionMessage,
-  createKeyPairSignerFromBytes,
-  getSignatureFromTransaction,
-  isAddress,
-  KeyPairSigner,
-  Rpc,
-  RpcSubscriptions,
-  sendAndConfirmTransactionFactory,
-  signature,
-  signTransactionMessageWithSigners,
-  SolanaRpcApi,
-  SolanaRpcSubscriptionsApi,
-  TransactionMessageWithBlockhashLifetime,
-} from "@solana/web3.js";
-import { getPublicSolanaRpcUrl } from "./web3";
-
-type Client = {
-  rpc: Rpc<SolanaRpcApi>;
-  rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>;
-};
-
-export const signAndSendTransaction = async (
-  client: Client,
-  transactionMessage: CompilableTransactionMessage &
-    TransactionMessageWithBlockhashLifetime,
-  commitment: Commitment = "confirmed",
-) => {
-  const signedTransaction = await signTransactionMessageWithSigners(
-    transactionMessage,
-  );
-  const signature = getSignatureFromTransaction(signedTransaction);
-  await sendAndConfirmTransactionFactory(client)(signedTransaction, {
-    commitment,
-  });
-  return signature;
-};
-
-export function loadKeypairFromFile(
-  filePath: string = DEFAULT_KEYPAIR_PATH,
-): Promise<KeyPairSigner> {
-  if (!doesFileExist(filePath)) {
-    throw Error(`Unable to locate keypair file: ${filePath}`);
-  }
-  const jsonBytes = loadJsonFile<Uint8Array>(filePath);
-  return createKeyPairSignerFromBytes(Buffer.from(jsonBytes));
-}
+import { address, isAddress } from "gill";
+import { loadKeypairSignerFromFile } from "gill/node";
 
 export async function getAddressFromStringOrFilePath(input: string) {
   if (isAddress(input)) return address(input);
   else {
-    return (await loadKeypairFromFile(input)).address;
+    return (await loadKeypairSignerFromFile(input)).address;
   }
 }
 
@@ -153,11 +104,4 @@ export function getPlatformToolsVersions(): PlatformToolsVersions {
   });
 
   return tools;
-}
-
-export function getWebsocketUrl(cluster: SolanaCluster | string): URL {
-  const rpcUrl = getPublicSolanaRpcUrl(cluster);
-  const websocketUrl = new URL(rpcUrl);
-  websocketUrl.protocol = "ws";
-  return websocketUrl;
 }

@@ -9,7 +9,7 @@
     "allowJs": true,
     "checkJs": true,
 
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
 

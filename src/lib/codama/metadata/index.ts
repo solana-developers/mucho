@@ -6,5 +6,6 @@
  * @see https://github.com/codama-idl/codama
  */
 
-export * from './instructions';
-export * from './types';
+export * from "./instructions";
+export * from "./types";
+export * from "./utils";

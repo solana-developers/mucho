@@ -1,11 +1,8 @@
 import { Option } from "@commander-js/extra-typings";
-import {
-  DEFAULT_ACCOUNTS_DIR,
-  DEFAULT_CONFIG_FILE,
-  DEFAULT_KEYPAIR_PATH,
-} from "./solana";
+import { DEFAULT_ACCOUNTS_DIR, DEFAULT_CONFIG_FILE } from "./solana";
 import { loadSolanaCliConfig } from "@/lib/cli";
 import { join } from "path";
+import { DEFAULT_CLI_KEYPAIR_PATH } from "gill/node";
 
 export const cliConfig = loadSolanaCliConfig();
 
@@ -26,7 +23,7 @@ export const COMMON_OPTIONS = {
    * path to the local authority keypair
    */
   keypair: new Option("--keypair <PATH>", "path to a keypair file").default(
-    cliConfig?.keypair_path || DEFAULT_KEYPAIR_PATH,
+    cliConfig?.keypair_path || DEFAULT_CLI_KEYPAIR_PATH,
   ),
   /**
    * rpc url or moniker to use

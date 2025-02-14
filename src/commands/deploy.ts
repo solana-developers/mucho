@@ -10,12 +10,9 @@ import {
 } from "@/lib/shell/deploy";
 import { autoLocateProgramsInWorkspace } from "@/lib/cargo";
 import { directoryExists, doesFileExist } from "@/lib/utils";
-import {
-  getSafeClusterMoniker,
-  loadKeypairFromFile,
-  parseRpcUrlOrMoniker,
-} from "@/lib/solana";
+import { getSafeClusterMoniker, parseRpcUrlOrMoniker } from "@/lib/solana";
 import { promptToSelectCluster } from "@/lib/prompts/build";
+import { loadKeypairSignerFromFile } from "gill/node";
 
 /**
  * Command: `deploy`
@@ -142,7 +139,7 @@ export function deployCommand() {
         buildDir,
         `${options.programName}-keypair.json`,
       );
-      const programKeypair = await loadKeypairFromFile(programIdPath);
+      const programKeypair = await loadKeypairSignerFromFile(programIdPath);
 
       // process the user's config file if they have one
       if (config?.programs) {
@@ -234,7 +231,7 @@ export function deployCommand() {
         programInfo = await getDeployedProgramInfo(programId, options.url);
       }
 
-      const authorityKeypair = await loadKeypairFromFile(
+      const authorityKeypair = await loadKeypairSignerFromFile(
         config.settings.keypair,
       );
 

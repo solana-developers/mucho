@@ -1,7 +1,10 @@
 import { JsonAccountStruct } from "@/lib/shell/clone";
+import { SolanaClusterMoniker } from "gill";
 
 export type SolanaTomlWithConfigPath = Omit<SolanaToml, "configPath"> &
   NonNullable<{ configPath: SolanaToml["configPath"] }>;
+
+export type SolanaCluster = SolanaClusterMoniker | "mainnet-beta" | "localhost";
 
 export type SolanaToml = {
   configPath?: string;
@@ -30,14 +33,6 @@ export type SolanaToml = {
   programs?: ProgramsByClusterLabels;
   clone?: Partial<SolanaTomlClone>;
 };
-
-export type SolanaCluster =
-  | "mainnet"
-  | "mainnet-beta"
-  | "devnet"
-  | "testnet"
-  | "localhost"
-  | "localnet";
 
 export type SolanaTomlCloneConfig = {
   address: string;

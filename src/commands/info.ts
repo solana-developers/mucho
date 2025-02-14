@@ -7,8 +7,9 @@ import ora from "ora";
 import { getCommandOutput } from "@/lib/shell";
 import { checkInstalledTools } from "@/lib/setup";
 import { getPlatformToolsVersions } from "@/lib/solana";
-import { DEFAULT_CLI_YAML_PATH, DEFAULT_KEYPAIR_PATH } from "@/const/solana";
+import { DEFAULT_CLI_YAML_PATH } from "@/const/solana";
 import { doesFileExist } from "@/lib/utils";
+import { DEFAULT_CLI_KEYPAIR_PATH } from "gill/node";
 
 /**
  * Command: `info`
@@ -87,7 +88,7 @@ export function infoCommand() {
       }
 
       // only attempt to fetch the address and balances if the user has a local keypair created
-      if (await doesFileExist(DEFAULT_KEYPAIR_PATH)) {
+      if (await doesFileExist(DEFAULT_CLI_KEYPAIR_PATH)) {
         const address = await getCommandOutput("solana address");
         info.push("Address: " + address);
 
@@ -106,7 +107,9 @@ export function infoCommand() {
           info.push("  " + key + ": " + balances[key]);
         }
       } else {
-        info.push(`Default keypair file NOT found at: ${DEFAULT_KEYPAIR_PATH}`);
+        info.push(
+          `Default keypair file NOT found at: ${DEFAULT_CLI_KEYPAIR_PATH}`,
+        );
       }
 
       info.push("Is test-validator running? " + !!testValidatorChecker);

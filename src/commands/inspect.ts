@@ -8,19 +8,19 @@ import {
 } from "@/lib/logs";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { inspectAddress, inspectSignature } from "@/lib/inspect";
-import { getMonikerFromGenesisHash, getPublicSolanaRpcUrl } from "@/lib/web3";
+import { getMonikerFromGenesisHash } from "@/lib/web3";
+import { inspectBlock } from "@/lib/inspect/block";
+import { numberStringToNumber } from "@/lib/utils";
+import { parseRpcUrlOrMoniker } from "@/lib/solana";
 import {
+  getPublicSolanaRpcUrl,
   address,
   createSolanaRpc,
   isAddress,
   isSignature,
   isStringifiedNumber,
   signature,
-} from "@solana/web3.js";
-import { inspectBlock } from "@/lib/inspect/block";
-import { numberStringToNumber } from "@/lib/utils";
-import { parseRpcUrlOrMoniker } from "@/lib/solana";
-import { SolanaCluster } from "@/types/config";
+} from "gill";
 
 const helpText: string[] = [
   "Examples:",
@@ -104,7 +104,7 @@ export function inspectCommand() {
 
       clusterUrl = clusterUrl.startsWith("http")
         ? clusterUrl
-        : getPublicSolanaRpcUrl(clusterUrl as SolanaCluster);
+        : getPublicSolanaRpcUrl(clusterUrl as any);
       const rpc = createSolanaRpc(clusterUrl);
 
       try {
